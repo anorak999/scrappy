@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrappy - Web Scraper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <img src="../assets/icons/icon32.png" alt="Scrappy" class="logo-icon">
+        <h1 class="logo-text">Scrappy</h1>
+      </div>
+      <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Page Info -->
+      <section class="page-info" id="page-info">
+        <div class="page-title" id="page-title">Loading...</div>
+        <div class="page-url" id="page-url"></div>
+      </section>
+
+      <!-- Format Selector -->
+      <section class="format-section">
+        <label class="section-label">Export Format</label>
+        <div class="format-options" id="format-options">
+          <button class="format-btn active" data-format="html" title="Self-contained HTML file">
+            <span class="format-icon">📄</span>
+            <span class="format-name">HTML</span>
+          </button>
+          <button class="format-btn" data-format="mhtml" title="Web Archive format">
+            <span class="format-icon">📦</span>
+            <span class="format-name">MHTML</span>
+          </button>
+          <button class="format-btn" data-format="zip" title="ZIP with separate assets">
+            <span class="format-icon">🗂️</span>
+            <span class="format-name">ZIP</span>
+          </button>
+          <button class="format-btn" data-format="pdf" title="PDF document">
+            <span class="format-icon">📑</span>
+            <span class="format-name">PDF</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Scrape Button -->
+      <section class="action-section">
+        <button id="scrape-btn" class="scrape-btn">
+          <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span class="btn-text">Capture Page</span>
+        </button>
+      </section>
+
+      <!-- Progress -->
+      <section class="progress-section hidden" id="progress-section">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">Initializing...</div>
+      </section>
+
+      <!-- Result -->
+      <section class="result-section hidden" id="result-section">
+        <div class="result-icon" id="result-icon">✅</div>
+        <div class="result-message" id="result-message">Capture complete!</div>
+        <div class="result-details" id="result-details"></div>
+      </section>
+
+      <!-- Error -->
+      <section class="error-section hidden" id="error-section">
+        <div class="error-icon">❌</div>
+        <div class="error-message" id="error-message"></div>
+        <button class="retry-btn" id="retry-btn">Try Again</button>
+      </section>
+    </main>
+
+    <!-- Settings Panel -->
+    <aside class="settings-panel hidden" id="settings-panel">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button id="settings-close" class="icon-btn" aria-label="Close settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="settings-content">
+        <div class="setting-group">
+          <label class="setting-label">
+            <input type="checkbox" id="setting-inline-resources" checked>
+            <span>Inline external resources</span>
+          </label>
+          <p class="setting-description">Embed CSS, JS, and images directly in the file</p>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">
+            <input type="checkbox" id="setting-include-scripts" checked>
+            <span>Include JavaScript</span>
+          </label>
+          <p class="setting-description">Preserve scripts in captured page</p>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">
+            <input type="checkbox" id="setting-include-styles" checked>
+            <span>Include Stylesheets</span>
+          </label>
+          <p class="setting-description">Preserve CSS styling</p>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label" for="setting-timeout">Resource Timeout (seconds)</label>
+          <input type="number" id="setting-timeout" min="5" max="60" value="10" class="setting-input">
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label" for="setting-max-size">Max Resource Size (MB)</label>
+          <input type="number" id="setting-max-size" min="1" max="50" value="5" class="setting-input">
+        </div>
+
+        <div class="setting-actions">
+          <button id="settings-reset" class="btn-secondary">Reset to Defaults</button>
+          <button id="settings-save" class="btn-primary">Save</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p class="disclaimer">
+        Use responsibly. Respect website terms of service and copyright.
+      </p>
+    </footer>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

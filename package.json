@@ -1,0 +1,47 @@
+{
+  "name": "scrappy-web-scraper",
+  "version": "1.0.0",
+  "description": "Chrome extension for one-click web page scraping",
+  "main": "background/service-worker.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "build": "node scripts/build.js",
+    "package": "zip -r scrappy.zip . -x '*.git*' -x 'node_modules/*' -x 'tests/*' -x 'package*.json' -x 'scripts/*'"
+  },
+  "keywords": [
+    "chrome-extension",
+    "web-scraper",
+    "page-capture",
+    "html-downloader"
+  ],
+  "author": "anoraK",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.56.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "moduleFileExtensions": ["js"],
+    "testMatch": ["**/tests/**/*.test.js"],
+    "collectCoverageFrom": [
+      "core/**/*.js",
+      "exporters/**/*.js",
+      "!**/node_modules/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
