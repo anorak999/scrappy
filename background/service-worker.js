@@ -483,11 +483,164 @@ chrome.runtime.onInstalled.addListener((details) => {
     // Set default settings
     saveSettings(createDefaultConfig());
 
+    // Create context menus
+    setupContextMenus();
+
     // Open welcome page (optional)
     // chrome.tabs.create({ url: 'welcome.html' });
   } else if (details.reason === 'update') {
     console.log('[Scrappy] Extension updated to', chrome.runtime.getManifest().version);
+    
+    // Recreate context menus on update
+    setupContextMenus();
   }
+});
+
+// ============================================================================
+// Context Menus
+// ============================================================================
+
+/**
+ * Sets up context menu items
+ */
+const setupContextMenus = () => {
+  // Remove existing menus first
+  chrome.contextMenus.removeAll(() => {
+    // Parent menu
+    chrome.contextMenus.create({
+      id: 'scrappy-parent',
+      title: 'Scrappy',
+      contexts: ['page', 'frame', 'selection', 'link', 'image'],
+    });
+
+    // Format submenus
+    chrome.contextMenus.create({
+      id: 'scrappy-html',
+      parentId: 'scrappy-parent',
+      title: 'Capture as HTML',
+      contexts: ['page', 'frame'],
+    });
+
+    chrome.contextMenus.create({
+      id: 'scrappy-mhtml',
+      parentId: 'scrappy-parent',
+      title: 'Capture as MHTML',
+      contexts: ['page', 'frame'],
+    });
+
+    chrome.contextMenus.create({
+      id: 'scrappy-pdf',
+      parentId: 'scrappy-parent',
+      title: 'Capture as PDF',
+      contexts: ['page', 'frame'],
+    });
+
+    chrome.contextMenus.create({
+      id: 'scrappy-zip',
+      parentId: 'scrappy-parent',
+      title: 'Capture as ZIP',
+      contexts: ['page', 'frame'],
+    });
+
+    // Separator
+    chrome.contextMenus.create({
+      id: 'scrappy-separator',
+      parentId: 'scrappy-parent',
+      type: 'separator',
+      contexts: ['page', 'frame'],
+    });
+
+    // Quick capture with default format
+    chrome.contextMenus.create({
+      id: 'scrappy-quick',
+      parentId: 'scrappy-parent',
+      title: 'Quick Capture (Default)',
+      contexts: ['page', 'frame'],
+    });
+  });
+};
+
+// Context menu click handler
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (!tab?.id) return;
+
+  const menuToFormat = {
+    'scrappy-html': 'html',
+    'scrappy-mhtml': 'mhtml',
+    'scrappy-pdf': 'pdf',
+    'scrappy-zip': 'zip',
+  };
+
+  let format = menuToFormat[info.menuItemId];
+  
+  if (info.menuItemId === 'scrappy-quick') {
+    const settings = await getSettings();
+    format = settings.format || 'html';
+  }
+
+  if (format) {
+    // Show capturing badge
+    chrome.action.setBadgeText({ text: '...', tabId: tab.id });
+    chrome.action.setBadgeBackgroundColor({ color: '#00ff88' });
+
+    try {
+      const result = await handleScrapeRequest({ tabId: tab.id, format });
+      
+      if (result.ok) {
+        chrome.action.setBadgeText({ text: '✓', tabId: tab.id });
+      } else {
+        chrome.action.setBadgeText({ text: '!', tabId: tab.id });
+      }
+    } catch (e) {
+      chrome.action.setBadgeText({ text: '!', tabId: tab.id });
+    }
+
+    // Clear badge after 2 seconds
+    setTimeout(() => {
+      chrome.action.setBadgeText({ text: '', tabId: tab.id });
+    }, 2000);
+  }
+});
+
+// ============================================================================
+// Keyboard Shortcuts
+// ============================================================================
+
+chrome.commands.onCommand.addListener(async (command) => {
+  // Get active tab
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) return;
+
+  const commandToFormat = {
+    'capture-html': 'html',
+    'capture-mhtml': 'mhtml',
+    'capture-pdf': 'pdf',
+    'capture-zip': 'zip',
+  };
+
+  const format = commandToFormat[command];
+  if (!format) return;
+
+  // Show capturing badge
+  chrome.action.setBadgeText({ text: '...', tabId: tab.id });
+  chrome.action.setBadgeBackgroundColor({ color: '#00ff88' });
+
+  try {
+    const result = await handleScrapeRequest({ tabId: tab.id, format });
+    
+    if (result.ok) {
+      chrome.action.setBadgeText({ text: '✓', tabId: tab.id });
+    } else {
+      chrome.action.setBadgeText({ text: '!', tabId: tab.id });
+    }
+  } catch (e) {
+    chrome.action.setBadgeText({ text: '!', tabId: tab.id });
+  }
+
+  // Clear badge after 2 seconds
+  setTimeout(() => {
+    chrome.action.setBadgeText({ text: '', tabId: tab.id });
+  }, 2000);
 });
 
 // Startup handler
@@ -496,6 +649,9 @@ chrome.runtime.onStartup.addListener(() => {
   
   // Clean up any stale data
   resetResourceCache();
+  
+  // Ensure context menus exist
+  setupContextMenus();
 });
 
 // Action click handler (for direct scrape without popup)

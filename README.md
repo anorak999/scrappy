@@ -26,6 +26,24 @@ Supports HTML, MHTML, PDF, and ZIP export formats.
 | **⚡ Smart Caching** | Memoization prevents redundant network requests |
 | **🛡️ Fault Tolerant** | Circuit breakers protect against cascading failures |
 | **🔒 Privacy First** | All processing happens locally—no data sent to servers |
+| **📊 Resource Stats** | Live preview of images, styles, scripts, fonts counts |
+| **📜 Capture History** | Track and review your recent captures |
+| **⌨️ Keyboard Shortcuts** | Quick capture with Alt+Shift+H/M/P/Z |
+| **🖱️ Context Menu** | Right-click to capture in any format |
+| **📐 Size Estimation** | Preview estimated file size before capture |
+
+---
+
+## 🎹 Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Alt+Shift+H` | Capture as HTML |
+| `Alt+Shift+M` | Capture as MHTML |
+| `Alt+Shift+P` | Capture as PDF |
+| `Alt+Shift+Z` | Capture as ZIP |
+
+You can customize these shortcuts in `chrome://extensions/shortcuts`
 
 ---
 
@@ -78,8 +96,20 @@ Click the ⚙️ gear icon to configure:
 | Inline Resources | Embed CSS, JS, images directly in output | ✅ On |
 | Include JavaScript | Preserve scripts in captured page | ✅ On |
 | Include Stylesheets | Preserve CSS styling | ✅ On |
+| Remove Tracking | Strip analytics and tracking scripts | ❌ Off |
+| Preserve Form Data | Save form input values | ❌ Off |
 | Resource Timeout | Max wait time per resource (seconds) | 10 |
 | Max Resource Size | Skip resources larger than (MB) | 5 |
+
+### Quick Options
+
+Toggle these chips in the popup for quick adjustments:
+
+| Option | Description |
+|--------|-------------|
+| Lazy Load | Scroll page to trigger lazy-loaded content |
+| Clean | Remove ads, popups, and overlays |
+| Minify | Compress HTML/CSS output |
 
 ---
 
@@ -129,7 +159,8 @@ scrappy/
 │   ├── circuit-breaker.js  # Fault tolerance pattern
 │   ├── dead-letter-queue.js# Error logging and analysis
 │   ├── resource-fetcher.js # Network requests with caching
-│   └── html-processor.js   # HTML parsing and inlining
+│   ├── html-processor.js   # HTML parsing and inlining
+│   └── diff.js             # Content comparison algorithm
 ├── exporters/
 │   ├── exporter-interface.js # Port interface definition
 │   ├── html-exporter.js    # Self-contained HTML export

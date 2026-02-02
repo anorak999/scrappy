@@ -19,7 +19,8 @@
     "storage",
     "downloads",
     "notifications",
-    "debugger"
+    "debugger",
+    "contextMenus"
   ],
 
   "host_permissions": [
@@ -60,6 +61,33 @@
 
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+
+  "commands": {
+    "capture-html": {
+      "suggested_key": {
+        "default": "Alt+Shift+H"
+      },
+      "description": "Capture page as HTML"
+    },
+    "capture-mhtml": {
+      "suggested_key": {
+        "default": "Alt+Shift+M"
+      },
+      "description": "Capture page as MHTML"
+    },
+    "capture-pdf": {
+      "suggested_key": {
+        "default": "Alt+Shift+P"
+      },
+      "description": "Capture page as PDF"
+    },
+    "capture-zip": {
+      "suggested_key": {
+        "default": "Alt+Shift+Z"
+      },
+      "description": "Capture page as ZIP"
+    }
   },
 
   "minimum_chrome_version": "102"
